@@ -8,7 +8,7 @@ action :write do
   if !system("defaults read \"#{new_resource.domain}\" \"#{new_resource.key}\" | grep ^#{value}$")
     execute "#{new_resource.description} - #{new_resource.domain} - #{new_resource.key}"  do
       command "defaults write \"#{new_resource.domain}\" \"#{new_resource.key}\" #{type_flag} #{value}"
-      user node['current_user']
+      user    node['current_user']
       not_if "defaults read \"#{new_resource.domain}\" \"#{new_resource.key}\" | grep ^#{value}$"
     end
 
