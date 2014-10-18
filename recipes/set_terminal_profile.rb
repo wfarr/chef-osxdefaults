@@ -1,18 +1,27 @@
-template "#{Chef::Config[:file_cache_path]}/#{node['osxdefaults']['terminal']['profile']}.terminal" do
+if node['osxdefaults']['terminal']['profile']['source']
+  remote_file "#{Chef::Config[:file_cache_path]}/#{node['osxdefaults']['terminal']['profile']}.terminal" do
+    source node['osxdefaults']['terminal']['profile']['source']
+    owner node['current_user']
+    mode "0755"
+    not_if "defaults read \"com.apple.Terminal\" \"Default Window Settings\" | grep ^#{node['osxdefaults']['terminal']['profile']}$", :user => node['current_user']
+  end
+else
+  template "#{Chef::Config[:file_cache_path]}/#{node['osxdefaults']['terminal']['profile']}.terminal" do
     source "#{node['osxdefaults']['terminal']['profile']}.terminal"
     owner node['current_user']
     mode "0755"
     not_if "defaults read \"com.apple.Terminal\" \"Default Window Settings\" | grep ^#{node['osxdefaults']['terminal']['profile']}$", :user => node['current_user']
+  end
 end
 
 execute "Load the terminal theme" do
-    command "open #{Chef::Config[:file_cache_path]}/#{node["osxdefaults"]["terminal"]["profile"]}.terminal"
-    not_if "defaults read \"com.apple.Terminal\" \"Default Window Settings\" | grep ^#{node["osxdefaults"]["terminal"]["profile"]}$", :user => node['current_user']
+  command "open #{Chef::Config[:file_cache_path]}/#{node["osxdefaults"]["terminal"]["profile"]}.terminal"
+  not_if "defaults read \"com.apple.Terminal\" \"Default Window Settings\" | grep ^#{node["osxdefaults"]["terminal"]["profile"]}$", :user => node['current_user']
 end
 
 execute "Wait a while" do
-    command "sleep 5"
-    not_if "defaults read \"com.apple.Terminal\" \"Default Window Settings\" | grep ^#{node["osxdefaults"]["terminal"]["profile"]}$", :user => node['current_user']
+  command "sleep 5"
+  not_if "defaults read \"com.apple.Terminal\" \"Default Window Settings\" | grep ^#{node["osxdefaults"]["terminal"]["profile"]}$", :user => node['current_user']
 end
 
 osxdefaults_defaults "Default Window Settings" do
