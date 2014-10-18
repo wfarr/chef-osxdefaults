@@ -1,6 +1,6 @@
-if node['osxdefaults']['terminal']['profile']['source']
+if node['osxdefaults']['terminal']['source']
   remote_file "#{Chef::Config[:file_cache_path]}/#{node['osxdefaults']['terminal']['profile']}.terminal" do
-    source node['osxdefaults']['terminal']['profile']['source']
+    source node['osxdefaults']['terminal']['source']
     owner node['current_user']
     mode "0755"
     not_if "defaults read \"com.apple.Terminal\" \"Default Window Settings\" | grep ^#{node['osxdefaults']['terminal']['profile']}$", :user => node['current_user']
